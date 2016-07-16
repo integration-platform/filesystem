@@ -1,6 +1,7 @@
 package org.stavros.interplat.fs.txt;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.stavros.interplat.fs.FileSource;
 import org.stavros.interplat.fs.txt.query.TextFileQuery;
@@ -18,9 +19,13 @@ public class TextFile extends FileSource {
 		
 	}
 
-	public Model getData(GenericQuery query) {
+	public Model getData(GenericQuery query) throws FileNotFoundException {
 		TextFileQuery textFileQuery = (TextFileQuery)query;
-		return null;
+		
+		Engine engine = new Engine();
+		Model model = engine.process(getFile(), textFileQuery);
+		
+		return model;
 	}
 
 	public void close() {
