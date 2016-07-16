@@ -7,10 +7,12 @@ public class DefaultTextFileQuery implements TextFileQuery {
 
 	private List<Long> lineNumbers;
 	private List<String> regularExpressions;
+	private List<String> samples;
 	
 	public DefaultTextFileQuery() {
 		this.lineNumbers = new ArrayList<>();
 		this.regularExpressions = new ArrayList<>();
+		this.samples = new ArrayList<>();
 	}
 	
 	public List<Long> getLineNumbers() {
@@ -19,6 +21,11 @@ public class DefaultTextFileQuery implements TextFileQuery {
 
 	public List<String> getRegularExpressions() {
 		return this.regularExpressions;
+	}
+
+	@Override
+	public List<String> getSamples() {
+		return this.samples;
 	}
 
 }

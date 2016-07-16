@@ -9,5 +9,7 @@ public interface TextFileQuery extends GenericQuery {
 	List<Long> getLineNumbers();
 	
 	List<String> getRegularExpressions();
+	
+	List<String> getSamples();
 
 }

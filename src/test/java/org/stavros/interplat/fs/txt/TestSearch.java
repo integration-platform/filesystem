@@ -9,16 +9,20 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.stavros.interplat.fs.txt.query.TextFileLineNumbers;
 import org.stavros.interplat.model.Model;
 
 public class TestSearch {
 	
-	@Test
-	public void test() {
-		File f = new File("test.txt");
-		try (FileWriter fw = new FileWriter(f);
+	private File simpleFile;
+	
+	@Before
+	public void setUp() {
+		this.simpleFile = new File("test.txt");
+		try (FileWriter fw = new FileWriter(this.simpleFile);
 				BufferedWriter bos = new BufferedWriter(fw);) {
 			bos.write("test11, test12, test13\n");
 			bos.write("test21, test22, test23\n");
@@ -28,20 +32,45 @@ public class TestSearch {
 		catch(IOException ioe) {
 			assertNull("Exception while creating file", ioe);
 		}
-		
-		TextFile tf = new TextFile(f);
+	}
+	
+	@Test
+	public void testNumbers() {
+		TextFile tf = new TextFile(this.simpleFile);
 		TextFileLineNumbers tfln = new TextFileLineNumbers();
 		tfln.getLineNumbers().add(2L);
 		tfln.getLineNumbers().add(4L);
 		try {
 			Model model = tf.getData(tfln);
 			
-			assertEquals(model.size(), 2);
-			assertNull(model.get(0).get("0"));
-			assertNull(model.get(0).get("1"));
-			assertEquals(model.get(0).get("2"), "test21, test22, test23");
-			assertNull(model.get(0).get("3"));
-			assertEquals(model.get(1).get("4"), "test41, test42, test43");
+			assertEquals(2, model.size());
+			
+			assertEquals(model.get(0).get("lineNumber"), 2L);
+			assertEquals(model.get(0).get("lineText"), "test21, test22, test23");
+			assertEquals(model.get(0).get("position"), 0L);
+			
+			assertEquals(model.get(1).get("lineNumber"), 4L);
+			assertEquals(model.get(1).get("lineText"), "test41, test42, test43");
+			assertEquals(model.get(1).get("position"), 0L);
+		}
+		catch(FileNotFoundException fnfe) {
+			assertNull("Exception while reading file", fnfe);
+		}
+	}
+	
+	@Test
+	public void testRegExps() {
+		TextFile tf = new TextFile(this.simpleFile);
+		TextFileLineNumbers tfln = new TextFileLineNumbers();
+		tfln.getSamples().add("43");
+		
+		try {
+			Model model = tf.getData(tfln);
+			
+			assertEquals(1, model.size());
+			assertEquals(model.get(0).get("lineNumber"), 4L);
+			assertEquals(model.get(0).get("lineText"), "test41, test42, test43");
+			assertEquals(model.get(0).get("position"), 20L);
 		}
 		catch(FileNotFoundException fnfe) {
 			assertNull("Exception while reading file", fnfe);
