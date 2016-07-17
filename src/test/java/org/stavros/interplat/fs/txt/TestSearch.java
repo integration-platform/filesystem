@@ -59,7 +59,7 @@ public class TestSearch {
 	}
 	
 	@Test
-	public void testRegExps() {
+	public void testSamples() {
 		TextFile tf = new TextFile(this.simpleFile);
 		TextFileLineNumbers tfln = new TextFileLineNumbers();
 		tfln.getSamples().add("43");
@@ -71,6 +71,25 @@ public class TestSearch {
 			assertEquals(model.get(0).get("lineNumber"), 4L);
 			assertEquals(model.get(0).get("lineText"), "test41, test42, test43");
 			assertEquals(model.get(0).get("position"), 20L);
+		}
+		catch(FileNotFoundException fnfe) {
+			assertNull("Exception while reading file", fnfe);
+		}
+	}
+	
+	@Test
+	public void testRegExps() {
+		TextFile tf = new TextFile(this.simpleFile);
+		TextFileLineNumbers tfln = new TextFileLineNumbers();
+		tfln.getRegularExpressions().add("(.*)43(.*)");
+		
+		try {
+			Model model = tf.getData(tfln);
+			
+			assertEquals(1, model.size());
+			assertEquals(model.get(0).get("lineNumber"), 4L);
+			assertEquals(model.get(0).get("lineText"), "test41, test42, test43");
+			assertEquals(model.get(0).get("position"), 0L);
 		}
 		catch(FileNotFoundException fnfe) {
 			assertNull("Exception while reading file", fnfe);
