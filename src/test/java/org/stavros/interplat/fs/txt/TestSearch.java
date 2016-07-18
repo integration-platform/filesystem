@@ -14,15 +14,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.stavros.interplat.fs.txt.query.TextFileLineNumbers;
 import org.stavros.interplat.model.Model;
+import org.stavros.interplat.source.GenericException;
 
 public class TestSearch {
 	
-	private File simpleFile;
+	private String FILE_NAME = "test.txt";
 	
 	@Before
 	public void setUp() {
-		this.simpleFile = new File("test.txt");
-		try (FileWriter fw = new FileWriter(this.simpleFile);
+		File simpleFile = new File(FILE_NAME);
+		try (FileWriter fw = new FileWriter(simpleFile);
 				BufferedWriter bos = new BufferedWriter(fw);) {
 			bos.write("test11, test12, test13\n");
 			bos.write("test21, test22, test23\n");
@@ -36,7 +37,7 @@ public class TestSearch {
 	
 	@Test
 	public void testNumbers() {
-		TextFile tf = new TextFile(this.simpleFile);
+		TextFile tf = new TextFile(FILE_NAME);
 		TextFileLineNumbers tfln = new TextFileLineNumbers();
 		tfln.getLineNumbers().add(2L);
 		tfln.getLineNumbers().add(4L);
@@ -53,14 +54,14 @@ public class TestSearch {
 			assertEquals(model.get(1).get("lineText"), "test41, test42, test43");
 			assertEquals(model.get(1).get("position"), 0L);
 		}
-		catch(FileNotFoundException fnfe) {
+		catch(GenericException fnfe) {
 			assertNull("Exception while reading file", fnfe);
 		}
 	}
 	
 	@Test
 	public void testSamples() {
-		TextFile tf = new TextFile(this.simpleFile);
+		TextFile tf = new TextFile(FILE_NAME);
 		TextFileLineNumbers tfln = new TextFileLineNumbers();
 		tfln.getSamples().add("43");
 		
@@ -72,14 +73,14 @@ public class TestSearch {
 			assertEquals(model.get(0).get("lineText"), "test41, test42, test43");
 			assertEquals(model.get(0).get("position"), 20L);
 		}
-		catch(FileNotFoundException fnfe) {
+		catch(GenericException fnfe) {
 			assertNull("Exception while reading file", fnfe);
 		}
 	}
 	
 	@Test
 	public void testRegExps() {
-		TextFile tf = new TextFile(this.simpleFile);
+		TextFile tf = new TextFile(FILE_NAME);
 		TextFileLineNumbers tfln = new TextFileLineNumbers();
 		tfln.getRegularExpressions().add("(.*)43(.*)");
 		
@@ -91,7 +92,7 @@ public class TestSearch {
 			assertEquals(model.get(0).get("lineText"), "test41, test42, test43");
 			assertEquals(model.get(0).get("position"), 0L);
 		}
-		catch(FileNotFoundException fnfe) {
+		catch(GenericException fnfe) {
 			assertNull("Exception while reading file", fnfe);
 		}
 	}
